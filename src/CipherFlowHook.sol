@@ -14,14 +14,15 @@ import {ModifyLiquidityParams, SwapParams} from "@uniswap/v4-core/src/types/Pool
 import {LPFeeLibrary} from "@uniswap/v4-core/src/libraries/LPFeeLibrary.sol";
 import {SafeCast} from "@uniswap/v4-core/src/libraries/SafeCast.sol";
 
-import {FHE, euint32, euint64, euint256, ebool} from "@fhenixprotocol/FHE.sol";
+// import {FHE, euint32, euint64, euint256, ebool} from "@fhenixprotocol/FHE.sol"; // Using FhenixDemo instead
 import {Ownable} from "openzeppelin/access/Ownable.sol";
 import {ReentrancyGuard} from "openzeppelin/utils/ReentrancyGuard.sol";
 import {Pausable} from "openzeppelin/utils/Pausable.sol";
 
 import {ICipherFlowHook} from "./interfaces/ICipherFlow.sol";
 import {CipherFlowAVS} from "./CipherFlowAVS.sol";
-import {EncryptedMath} from "./libraries/EncryptedMath.sol";
+import {EncryptedMathDemo} from "./libraries/EncryptedMathDemo.sol";
+import {FhenixDemo} from "./libraries/FhenixDemo.sol";
 import {MEVProtection} from "./libraries/MEVProtection.sol";
 import {DynamicFees} from "./libraries/DynamicFees.sol";
 
@@ -41,9 +42,9 @@ contract CipherFlowHook is
     using PoolIdLibrary for PoolKey;
     using SafeCast for uint256;
     using LPFeeLibrary for uint24;
-    using EncryptedMath for euint256;
-    using EncryptedMath for euint64;
-    using EncryptedMath for euint32;
+    using EncryptedMathDemo for FhenixDemo.euint256;
+    using EncryptedMathDemo for FhenixDemo.euint64;
+    using EncryptedMathDemo for FhenixDemo.euint32;
 
     // ==================== CONSTANTS ====================
     
@@ -448,7 +449,7 @@ contract CipherFlowHook is
         
         // Update pool liquidity metrics
         if (params.liquidityDelta < 0) {
-            uint256 removalAmount = uint256(uint128(-params.liquidityDelta));
+            uint256 removalAmount = uint256(uint128(uint256(-params.liquidityDelta)));
             if (totalEncryptedLiquidity[poolId] >= removalAmount) {
                 totalEncryptedLiquidity[poolId] -= removalAmount;
             }
@@ -548,7 +549,7 @@ contract CipherFlowHook is
             revert UnauthorizedAccess();
         }
         
-        return EncryptedMath.seal(position.encryptedAmount, userPublicKey);
+        return EncryptedMathDemo.seal(position.encryptedAmount, userPublicKey);
     }
     
     /**
@@ -632,9 +633,7 @@ contract CipherFlowHook is
         });
         
         PoolKey memory keyMemory = key;
-        // Create a compatible params structure for MEVProtection
-        // Note: MEVProtection expects IPoolManager.SwapParams but we have SwapParams
-        // This is a temporary workaround - in production, these types should be aligned
+        // MEVProtection now uses the same SwapParams type
         MEVProtection.MEVRisk memory baseRisk = MEVProtection.calculateMEVRisk(keyMemory, params, volData);
         
         // Advanced risk factors
@@ -966,7 +965,7 @@ contract CipherFlowHook is
    ) internal view returns (bool) {
        // Check for just-in-time liquidity attacks
        if (params.liquidityDelta > 0) {
-           uint256 amount = uint256(uint128(params.liquidityDelta > 0 ? params.liquidityDelta : -params.liquidityDelta));
+           uint256 amount = uint256(uint128(uint256(params.liquidityDelta > 0 ? params.liquidityDelta : -params.liquidityDelta)));
            uint256 currentLiquidity = totalEncryptedLiquidity[poolId];
            
            // Suspicious if adding >50% of current liquidity
@@ -993,7 +992,7 @@ contract CipherFlowHook is
        address provider
    ) internal view returns (bool) {
        if (params.liquidityDelta < 0) {
-           uint256 removalAmount = uint256(uint128(-params.liquidityDelta));
+           uint256 removalAmount = uint256(uint128(uint256(-params.liquidityDelta)));
            uint256 currentLiquidity = totalEncryptedLiquidity[poolId];
            
            // Suspicious if removing >30% of total liquidity at once
@@ -1179,8 +1178,8 @@ contract CipherFlowHook is
    ) internal {
        // Large liquidity changes can indicate volatility
        uint256 liquidityChange = params.liquidityDelta > 0 ? 
-           uint256(uint128(params.liquidityDelta)) : 
-           uint256(uint128(-params.liquidityDelta));
+           uint256(uint128(uint256(params.liquidityDelta))) : 
+           uint256(uint128(uint256(-params.liquidityDelta)));
        
        uint256 currentLiquidity = totalEncryptedLiquidity[poolId];
        
@@ -1209,7 +1208,7 @@ contract CipherFlowHook is
        BalanceDelta delta
    ) internal {
        if (params.liquidityDelta < 0) {
-           uint256 removalAmount = uint256(uint128(-params.liquidityDelta));
+           uint256 removalAmount = uint256(uint128(uint256(-params.liquidityDelta)));
            uint256 remainingLiquidity = totalEncryptedLiquidity[poolId];
            
            // Check if removal significantly impacts pool
@@ -1423,12 +1422,12 @@ contract CipherFlowHook is
        ));
        
        // Encrypt position data using real FHE
-       euint256 encryptedAmount = EncryptedMath.encryptUint256(
-           uint256(params.liquidityDelta > 0 ? uint128(params.liquidityDelta) : 0)
+               FhenixDemo.euint256 memory encryptedAmount = EncryptedMathDemo.encryptUint256(
+           uint256(params.liquidityDelta > 0 ? uint128(uint256(params.liquidityDelta)) : 0)
        );
-       euint32 encryptedTickLower = EncryptedMath.encryptUint32(uint32(int32(params.tickLower)));
-       euint32 encryptedTickUpper = EncryptedMath.encryptUint32(uint32(int32(params.tickUpper)));
-       euint256 encryptedStrategy = EncryptedMath.encryptUint256(
+       FhenixDemo.euint32 memory encryptedTickLower = EncryptedMathDemo.encryptUint32(uint32(int32(params.tickLower)));
+       FhenixDemo.euint32 memory encryptedTickUpper = EncryptedMathDemo.encryptUint32(uint32(int32(params.tickUpper)));
+       FhenixDemo.euint256 memory encryptedStrategy = EncryptedMathDemo.encryptUint256(
            strategyData.length > 0 ? abi.decode(strategyData, (uint256)) : 0
        );
        
@@ -1466,7 +1465,7 @@ contract CipherFlowHook is
        // Update encrypted amount with actual delta
        uint256 actualAmount = uint256(uint128(delta.amount0() >= 0 ? delta.amount0() : -delta.amount0())) + 
                              uint256(uint128(delta.amount1() >= 0 ? delta.amount1() : -delta.amount1()));
-       euint256 encryptedActualAmount = EncryptedMath.encryptUint256(actualAmount);
+       FhenixDemo.euint256 memory encryptedActualAmount = EncryptedMathDemo.encryptUint256(actualAmount);
        
        position.encryptedAmount = encryptedActualAmount;
    }
@@ -1488,8 +1487,8 @@ contract CipherFlowHook is
            
            // Note: In Fhenix CoFHE, decryption is handled asynchronously by the coprocessor
            // For now, we'll use a simplified approach - in production, this would use CoFHE's callback mechanism
-           // uint32 decryptedTickLower = EncryptedMath.decrypt(position.encryptedTickLower);
-           // uint32 decryptedTickUpper = EncryptedMath.decrypt(position.encryptedTickUpper);
+           // uint32 decryptedTickLower = EncryptedMathDemo.decrypt(position.encryptedTickLower);
+           // uint32 decryptedTickUpper = EncryptedMathDemo.decrypt(position.encryptedTickUpper);
            
            // Simplified position matching - in production, this would use encrypted comparison
            // For now, we'll assume the position matches if it's active
@@ -1499,17 +1498,17 @@ contract CipherFlowHook is
            // For now, we'll process all active positions
                
                if (params.liquidityDelta < 0) {
-                   uint256 removeAmount = uint256(uint128(-params.liquidityDelta));
-                   euint256 currentAmount = position.encryptedAmount;
-                   euint256 encryptedRemoveAmount = EncryptedMath.encryptUint256(removeAmount);
+                   uint256 removeAmount = uint256(uint128(uint256(-params.liquidityDelta)));
+                   FhenixDemo.euint256 memory currentAmount = position.encryptedAmount;
+                   FhenixDemo.euint256 memory encryptedRemoveAmount = EncryptedMathDemo.encryptUint256(removeAmount);
                    
                    // Use encrypted subtraction
-                   position.encryptedAmount = EncryptedMath.subEncrypted(currentAmount, encryptedRemoveAmount);
+                   position.encryptedAmount = EncryptedMathDemo.subEncrypted(currentAmount, encryptedRemoveAmount);
                    
                    // Check if position should be deactivated
                    // In production, this would use CoFHE's callback mechanism for decryption
                    // For now, we'll use a simplified approach
-                   // uint256 remainingAmount = EncryptedMath.decrypt(position.encryptedAmount);
+                   // uint256 remainingAmount = EncryptedMathDemo.decrypt(position.encryptedAmount);
                    // if (remainingAmount == 0) {
                    //     position.isActive = false;
                    // }
@@ -1530,11 +1529,11 @@ contract CipherFlowHook is
    ) internal returns (bytes32 batchId) {
        // Create encrypted order
        EncryptedOrder memory order = EncryptedOrder({
-           encryptedAmount: EncryptedMath.encryptUint256(
+           encryptedAmount: EncryptedMathDemo.encryptUint256(
                params.amountSpecified < 0 ? uint256(-params.amountSpecified) : uint256(params.amountSpecified)
            ),
-           encryptedMinOut: EncryptedMath.encryptUint256(0), // Calculated by AVS
-           encryptedDeadline: EncryptedMath.encryptUint64(uint64(block.timestamp + 300)), // 5 minutes
+           encryptedMinOut: EncryptedMathDemo.encryptUint256(0), // Calculated by AVS
+           encryptedDeadline: EncryptedMathDemo.encryptUint64(uint64(block.timestamp + 300)), // 5 minutes
            swapper: sender,
            poolId: key.toId(),
            isExactInput: params.amountSpecified > 0

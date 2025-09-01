@@ -4,7 +4,8 @@ pragma solidity ^0.8.24;
 import {PoolKey} from "@uniswap/v4-core/src/types/PoolKey.sol";
 import {PoolId} from "@uniswap/v4-core/src/types/PoolId.sol";
 import {ModifyLiquidityParams} from "@uniswap/v4-core/src/types/PoolOperation.sol";
-import {euint32, euint64, euint256, ebool} from "@fhenixprotocol/FHE.sol";
+// import {euint32, euint64, euint256, ebool} from "@fhenixprotocol/FHE.sol"; // Using FhenixDemo instead
+import {FhenixDemo} from "../libraries/FhenixDemo.sol";
 
 /**
  * @title ICipherFlowHook
@@ -25,10 +26,10 @@ interface ICipherFlowHook {
      * @param owner Position owner
      */
     struct EncryptedLPPosition {
-        euint256 encryptedAmount;
-        euint32 encryptedTickLower;
-        euint32 encryptedTickUpper;
-        euint256 encryptedStrategy;
+        FhenixDemo.euint256 encryptedAmount;
+        FhenixDemo.euint32 encryptedTickLower;
+        FhenixDemo.euint32 encryptedTickUpper;
+        FhenixDemo.euint256 encryptedStrategy;
         uint256 timestamp;
         bool isActive;
         address owner;
@@ -62,9 +63,9 @@ interface ICipherFlowHook {
      * @param isExactInput Whether it's exact input swap
      */
     struct EncryptedOrder {
-        euint256 encryptedAmount;
-        euint256 encryptedMinOut;
-        euint64 encryptedDeadline;
+        FhenixDemo.euint256 encryptedAmount;
+        FhenixDemo.euint256 encryptedMinOut;
+        FhenixDemo.euint64 encryptedDeadline;
         address swapper;
         PoolId poolId;
         bool isExactInput;

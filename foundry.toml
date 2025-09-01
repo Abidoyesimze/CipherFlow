@@ -18,7 +18,6 @@ remappings = [
     "solmate/=lib/solmate/src/",
     "@openzeppelin/=lib/eigenlayer-contracts/lib/openzeppelin-contracts-v4.9.0/",
     "@openzeppelin-upgrades/=lib/eigenlayer-contracts/lib/openzeppelin-contracts-upgradeable-v4.9.0/",
-    "@fhenixprotocol/=lib/cofhe-contracts/contracts/",
     "@uniswap/v4-core/=lib/v4-periphery/lib/v4-core/",
     "permit2/=lib/v4-periphery/lib/permit2/",
     "ds-test/=lib/eigenlayer-contracts/lib/ds-test/src/"

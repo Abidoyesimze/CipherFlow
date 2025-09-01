@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {PoolKey} from "v4-core/types/PoolKey.sol";
-import {IPoolManager} from "v4-core/interfaces/IPoolManager.sol";
+import {PoolKey} from "@uniswap/v4-core/src/types/PoolKey.sol";
+import {SwapParams} from "@uniswap/v4-core/src/types/PoolOperation.sol";
 
 library MEVProtection {
     struct VolatilityData {
@@ -32,7 +32,7 @@ library MEVProtection {
      */
     function calculateMEVRisk(
         PoolKey memory key,
-        IPoolManager.SwapParams memory params,
+        SwapParams memory params,
         VolatilityData memory volatilityData
     ) internal pure returns (MEVRisk memory risk) {
         uint256 baseRisk = 0;
@@ -106,7 +106,7 @@ library MEVProtection {
 
     // Internal helper functions
     function _calculateSwapSizeRisk(
-        IPoolManager.SwapParams memory params
+        SwapParams memory params
     ) private pure returns (uint256 risk) {
         // Larger swaps have higher MEV risk
         uint256 swapSize = params.amountSpecified < 0 
