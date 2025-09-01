@@ -2,5 +2,60 @@
 src = "src"
 out = "out"
 libs = ["lib"]
+solc_version = "0.8.27"
+optimizer = true
+optimizer_runs = 200
+via_ir = false
+verbosity = 2
 
-# See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
+# Remappings for clean imports
+remappings = [
+    "forge-std/=lib/forge-std/src/",
+    "v4-core/=lib/v4-core/src/",
+    "v4-periphery/=lib/v4-periphery/src/",
+    "eigenlayer-contracts/=lib/eigenlayer-contracts/src/contracts/",
+    "openzeppelin/=lib/v4-core/lib/openzeppelin-contracts/contracts/",
+    "solmate/=lib/solmate/src/",
+    "@openzeppelin/=lib/eigenlayer-contracts/lib/openzeppelin-contracts-v4.9.0/",
+    "@openzeppelin-upgrades/=lib/eigenlayer-contracts/lib/openzeppelin-contracts-upgradeable-v4.9.0/",
+    "@fhenixprotocol/=lib/cofhe-contracts/contracts/",
+    "@uniswap/v4-core/=lib/v4-periphery/lib/v4-core/",
+    "permit2/=lib/v4-periphery/lib/permit2/",
+    "ds-test/=lib/eigenlayer-contracts/lib/ds-test/src/"
+]
+
+[profile.test]
+src = "src"
+test = "test"
+out = "out"
+libs = ["lib"]
+fuzz = { runs = 1000 }
+invariant = { runs = 256, depth = 15, fail_on_revert = false }
+
+# Gas reporting
+gas_reports = ["CipherFlowHook", "CipherFlowAVS", "EncryptedMath"]
+
+# Coverage
+coverage = true
+
+[profile.ci]
+fuzz = { runs = 10000 }
+invariant = { runs = 1000, depth = 20 }
+
+[profile.lite]
+fuzz = { runs = 100 }
+invariant = { runs = 50, depth = 10 }
+
+# RPC endpoints for deployment
+[rpc_endpoints]
+mainnet = "${MAINNET_RPC_URL}"
+sepolia = "${SEPOLIA_RPC_URL}"
+arbitrum_sepolia = "${ARBITRUM_SEPOLIA_RPC_URL}"
+base_sepolia = "${BASE_SEPOLIA_RPC_URL}"
+
+# Etherscan API keys for verification
+[etherscan]
+mainnet = { key = "${ETHERSCAN_API_KEY}" }
+sepolia = { key = "${ETHERSCAN_API_KEY}" }
+arbitrum = { key = "${ARBISCAN_API_KEY}" }
+base = { key = "${BASESCAN_API_KEY}" }
