@@ -2,9 +2,11 @@
 pragma solidity ^0.8.24;
 
 import {Test} from "forge-std/Test.sol";
-import {PoolKey} from "v4-core/types/PoolKey.sol";
-import {Currency} from "v4-core/types/Currency.sol";
-import {IPoolManager} from "v4-core/interfaces/IPoolManager.sol";
+import {PoolKey} from "@uniswap/v4-core/src/types/PoolKey.sol";
+import {Currency} from "@uniswap/v4-core/src/types/Currency.sol";
+import {IPoolManager} from "@uniswap/v4-core/src/interfaces/IPoolManager.sol";
+import {IHooks} from "@uniswap/v4-core/src/interfaces/IHooks.sol";
+import {ModifyLiquidityParams, SwapParams} from "@uniswap/v4-core/src/types/PoolOperation.sol";
 import {CipherFlowHook} from "../../src/CipherFlowHook.sol";
 import {ICipherFlowHook} from "../../src/interfaces/ICipherFlow.sol";
 
@@ -24,7 +26,7 @@ library TestHelper {
             currency1: Currency.wrap(token1),
             fee: DEFAULT_FEE,
             tickSpacing: TICK_SPACING,
-            hooks: hook
+            hooks: IHooks(hook)
         });
     }
     
@@ -41,19 +43,20 @@ library TestHelper {
     
     function createDefaultLiquidityParams(
         uint256 amount
-    ) internal pure returns (IPoolManager.ModifyLiquidityParams memory) {
-        return IPoolManager.ModifyLiquidityParams({
+    ) internal pure returns (ModifyLiquidityParams memory) {
+        return ModifyLiquidityParams({
             tickLower: -TICK_SPACING,
             tickUpper: TICK_SPACING,
-            liquidityDelta: int256(amount)
+            liquidityDelta: int256(amount),
+            salt: bytes32(0)
         });
     }
     
     function createDefaultSwapParams(
         uint256 amount,
         bool zeroForOne
-    ) internal pure returns (IPoolManager.SwapParams memory) {
-        return IPoolManager.SwapParams({
+    ) internal pure returns (SwapParams memory) {
+        return SwapParams({
             zeroForOne: zeroForOne,
             amountSpecified: int256(amount),
             sqrtPriceLimitX96: zeroForOne ? 

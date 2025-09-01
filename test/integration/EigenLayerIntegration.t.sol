@@ -16,16 +16,16 @@ contract EigenLayerIntegrationTest is Test {
     
     function testRealEigenLayerIntegration() public {
         // Test with real EigenLayer testnet contracts
-        skip("Integration test - requires testnet deployment");
+        vm.skip(true);
     }
     
     function testAVSOperatorWorkflow() public {
        // Test complete operator workflow
-       skip("Integration test - requires testnet deployment");
+               vm.skip(true);
    }
    
    function testBatchProcessing() public {
        // Test actual batch processing with real operators
-       skip("Integration test - requires testnet deployment");
+               vm.skip(true);
    }
 }
