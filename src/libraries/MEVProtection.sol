@@ -34,7 +34,7 @@ library MEVProtection {
         PoolKey memory key,
         SwapParams memory params,
         VolatilityData memory volatilityData
-    ) internal pure returns (MEVRisk memory risk) {
+    ) internal view returns (MEVRisk memory risk) {
         uint256 baseRisk = 0;
 
         // Factor 1: Price volatility

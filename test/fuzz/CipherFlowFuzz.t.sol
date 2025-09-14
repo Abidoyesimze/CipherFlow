@@ -4,7 +4,7 @@ pragma solidity ^0.8.24;
 import {Test} from "forge-std/Test.sol";
 // import {FHE, euint32, euint64, euint256, ebool} from "@fhenixprotocol/FHE.sol"; // Not used - using FhenixDemo instead
 import {CipherFlowHook} from "../../src/CipherFlowHook.sol";
-import {EncryptedMathDemo} from "../../src/libraries/EncryptedMathDemo.sol";
+import {SimpleEncryptedMathDemo} from "../../src/libraries/SimpleEncryptedMathDemo.sol";
 import {FhenixDemo} from "../../src/libraries/FhenixDemo.sol";
 import {MEVProtection} from "../../src/libraries/MEVProtection.sol";
 import {DynamicFees} from "../../src/libraries/DynamicFees.sol";
@@ -26,12 +26,12 @@ contract CipherFlowFuzzTest is Test {
         a = bound(a, 1, type(uint128).max);
         b = bound(b, 1, type(uint128).max);
         
-        FhenixDemo.euint256 memory encA = EncryptedMathDemo.encryptUint256(a);
-        FhenixDemo.euint256 memory encB = EncryptedMathDemo.encryptUint256(b);
+        FhenixDemo.euint256 memory encA = SimpleEncryptedMathDemo.encryptUint256(a);
+        FhenixDemo.euint256 memory encB = SimpleEncryptedMathDemo.encryptUint256(b);
         
         // Test addition doesn't overflow
         if (a + b <= type(uint256).max) {
-            FhenixDemo.euint256 memory sum = EncryptedMathDemo.addEncrypted(encA, encB);
+            FhenixDemo.euint256 memory sum = SimpleEncryptedMathDemo.addEncrypted(encA, encB);
             // Note: In real FHE, we can't decrypt directly - this would be handled by the CoFHE coprocessor
             // For testing purposes, we just verify the operation completes without reverting
             assertTrue(sum.value != 0);
@@ -39,14 +39,14 @@ contract CipherFlowFuzzTest is Test {
         
         // Test subtraction doesn't underflow
         if (a >= b) {
-            FhenixDemo.euint256 memory diff = EncryptedMathDemo.subEncrypted(encA, encB);
+            FhenixDemo.euint256 memory diff = SimpleEncryptedMathDemo.subEncrypted(encA, encB);
             // Note: In real FHE, we can't decrypt directly - this would be handled by the CoFHE coprocessor
             assertTrue(diff.value != 0);
         }
         
         // Test multiplication doesn't overflow
         if (a <= type(uint128).max && b <= type(uint128).max) {
-            FhenixDemo.euint256 memory product = EncryptedMathDemo.mulEncrypted(encA, encB);
+            FhenixDemo.euint256 memory product = SimpleEncryptedMathDemo.mulEncrypted(encA, encB);
             // Note: In real FHE, we can't decrypt directly - this would be handled by the CoFHE coprocessor
             assertTrue(product.value != 0);
         }
@@ -147,9 +147,9 @@ contract CipherFlowFuzzTest is Test {
         tickUpper = int24(bound(int256(tickUpper), tickLower + 1, 887220));
         
         // Test encryption doesn't fail
-        FhenixDemo.euint256 memory encryptedAmount = EncryptedMathDemo.encryptUint256(amount);
-        FhenixDemo.euint32 memory encryptedTickLower = EncryptedMathDemo.encryptUint32(uint32(int32(tickLower)));
-        FhenixDemo.euint32 memory encryptedTickUpper = EncryptedMathDemo.encryptUint32(uint32(int32(tickUpper)));
+        FhenixDemo.euint256 memory encryptedAmount = SimpleEncryptedMathDemo.encryptUint256(amount);
+        FhenixDemo.euint32 memory encryptedTickLower = SimpleEncryptedMathDemo.encryptUint32(uint32(int32(tickLower)));
+        FhenixDemo.euint32 memory encryptedTickUpper = SimpleEncryptedMathDemo.encryptUint32(uint32(int32(tickUpper)));
         
         // Note: In real FHE, we can't decrypt directly - this would be handled by the CoFHE coprocessor
         // For testing purposes, we just verify the encryption operations complete without reverting
