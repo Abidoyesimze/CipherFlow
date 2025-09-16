@@ -19,7 +19,7 @@ import {BalanceDelta} from "@uniswap/v4-core/src/types/BalanceDelta.sol";
 import {BeforeSwapDelta} from "@uniswap/v4-core/src/types/BeforeSwapDelta.sol";
 
 // CipherFlow imports
-import {CipherFlowHookForTesting} from "../src/CipherFlowHookForTesting.sol";
+import {CipherFlowHook} from "../src/CipherFlowHook.sol";
 import {CipherFlowAVS} from "../src/CipherFlowAVS.sol";
 import {ICipherFlowHook} from "../src/interfaces/ICipherFlow.sol";
 import {SimpleTestRouter} from "./utils/SimpleTestRouter.sol";
@@ -44,7 +44,7 @@ contract CipherFlowHookForkTest is Test {
     address mevBot = makeAddr("mevBot");
 
     // Contracts
-    CipherFlowHookForTesting public hook;
+    CipherFlowHook public hook;
     CipherFlowAVS public cipherFlowAVS;
     SimpleTestRouter public router;
     IPoolManager public manager;
@@ -104,10 +104,10 @@ contract CipherFlowHookForkTest is Test {
             address hookAddress = address(uint160(type(uint160).max & clearAllHookPermissionsMask | hookPermissions));
             
             // Deploy the hook to the calculated address
-            hook = CipherFlowHookForTesting(payable(hookAddress));
+            hook = CipherFlowHook(payable(hookAddress));
             deployCodeTo(
-                "CipherFlowHookForTesting", 
-                abi.encode(manager), 
+                "CipherFlowHook", 
+                abi.encode(manager, cipherFlowAVS, address(this)), 
                 address(hook)
             );
             
