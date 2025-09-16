@@ -123,6 +123,17 @@ library FhenixDemo {
     }
     
     /**
+     * @notice Add two encrypted uint64 values
+     * @param a First encrypted value
+     * @param b Second encrypted value
+     * @return result The encrypted sum
+     */
+    function add(euint64 memory a, euint64 memory b) internal pure returns (euint64 memory result) {
+        require(a.initialized && b.initialized, "Values not initialized");
+        return euint64(a.value + b.value, true);
+    }
+    
+    /**
      * @notice Add two encrypted uint32 values
      * @param a First encrypted value
      * @param b Second encrypted value
@@ -131,6 +142,18 @@ library FhenixDemo {
     function add(euint32 memory a, euint32 memory b) internal pure returns (euint32 memory result) {
         require(a.initialized && b.initialized, "Values not initialized");
         return euint32(a.value + b.value, true);
+    }
+    
+    /**
+     * @notice Subtract two encrypted uint64 values
+     * @param a First encrypted value
+     * @param b Second encrypted value
+     * @return result The encrypted difference
+     */
+    function sub(euint64 memory a, euint64 memory b) internal pure returns (euint64 memory result) {
+        require(a.initialized && b.initialized, "Values not initialized");
+        require(a.value >= b.value, "Underflow in subtraction");
+        return euint64(a.value - b.value, true);
     }
     
     /**
