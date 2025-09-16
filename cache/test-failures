@@ -1,1 +1,1 @@
-testFuzzDynamicFeeCalculation|testFuzzMEVRiskCalculation|testFuzzPositionEncryption
+testFuzzDynamicFeeCalculation|testFuzzEncryptedMath|testFuzzMEVRiskCalculation|testFuzzPositionEncryption
