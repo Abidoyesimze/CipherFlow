@@ -25,6 +25,8 @@ contract HelloWorldServiceManager is ECDSAServiceManagerBase, IHelloWorldService
 
     uint32 public latestTaskNum;
 
+    mapping(address => OperatorInfo) public operatorInfos;
+
     // mapping of task indices to all tasks hashes
     // when a task is created, task hash is stored here,
     // and responses need to pass the actual task,
@@ -67,10 +69,15 @@ contract HelloWorldServiceManager is ECDSAServiceManagerBase, IHelloWorldService
         )
     {
         MAX_RESPONSE_INTERVAL_BLOCKS = _maxResponseIntervalBlocks;
+        operatorInfos[msg.sender] = OperatorInfo({isActive: true});
     }
 
     function initialize(address initialOwner, address _rewardsInitiator) external initializer {
         __ServiceManagerBase_init(initialOwner, _rewardsInitiator);
+    }
+
+    function getOperatorInfo(address operator) external view returns (OperatorInfo memory) {
+        return operatorInfos[operator];
     }
 
     // These are just to comply with IServiceManager interface
@@ -118,7 +125,7 @@ contract HelloWorldServiceManager is ECDSAServiceManagerBase, IHelloWorldService
 
     //     return newTask;
     // }
-        function createNewTask(
+    function createNewTask(
         address tokenIn,
         address tokenOut,
         uint256 amountIn,
@@ -138,6 +145,35 @@ contract HelloWorldServiceManager is ECDSAServiceManagerBase, IHelloWorldService
         latestTaskNum = latestTaskNum + 1;
 
         return newTask;
+    }
+
+    // function createTask(bytes memory data) external returns (Task memory) {
+    //     return createNewTask(address(0), address(0), 0, 0);
+    // }
+
+    function submitOrderBatch(bytes memory encodedBatch) external returns (bytes32 batchId) {
+        EncryptedOrder[] memory orders = abi.decode(encodedBatch, (EncryptedOrder[]));
+        require(orders.length > 0, "Empty batch");
+
+        batchId = keccak256(abi.encodePacked("BATCH", block.timestamp, msg.sender));
+
+        for (uint256 i = 0; i < orders.length; i++) {
+            EncryptedOrder memory order = orders[i];
+            // Decode encrypted amounts if needed; for now, assume plain uint (simplified)
+            // In real FHE, operators decrypt off-chain
+            uint256 amountIn = abi.decode(order.encryptedAmount, (uint256)); // Adjust if FHE
+            uint32 deadline = abi.decode(order.encryptedDeadline, (uint32));
+
+            // Create individual task for each order
+            // createNewTask(
+            //     address(0), // tokenIn
+            //     address(0), // tokenOut
+            //     amountIn,
+            //     deadline
+            // );
+        }
+
+        emit NewBatchSubmitted(batchId, orders.length);
     }
 
     function respondToTask(

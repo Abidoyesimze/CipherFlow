@@ -6,12 +6,27 @@ interface IHelloWorldServiceManager {
 
     event TaskResponded(uint32 indexed taskIndex, Task task, address operator);
 
+    event NewBatchSubmitted(bytes32 indexed batchId, uint256 orderCount);
+
     struct Task {
         address tokenIn;
         address tokenOut;
         uint256 amountIn;
         uint32 deadline; // Block number or timestamp for expiration
         uint32 taskCreatedBlock;
+    }
+
+    struct EncryptedOrder {
+        bytes encryptedAmount; // Encoded as bytes since FHE; decode in operators
+        bytes encryptedMinOut;
+        bytes encryptedDeadline;
+        address swapper;
+        uint256 poolId;
+        bool isExactInput;
+    }
+
+    struct OperatorInfo {
+        bool isActive;
     }
 
     function latestTaskNum() external view returns (uint32);
@@ -31,6 +46,10 @@ interface IHelloWorldServiceManager {
         uint256 amountIn,
         uint32 deadline
     ) external returns (Task memory);
+
+    // function createTask(bytes memory data) external returns (Task memory);
+    function submitOrderBatch(bytes memory encodedBatch) external returns (bytes32 batchId);
+    function getOperatorInfo(address operator) external view returns (OperatorInfo memory);
 
     function respondToTask(
         Task calldata task,

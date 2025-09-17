@@ -20,6 +20,7 @@ import {ReentrancyGuard} from "openzeppelin/utils/ReentrancyGuard.sol";
 import {Pausable} from "openzeppelin/utils/Pausable.sol";
 
 import {ICipherFlowHook} from "./interfaces/ICipherFlow.sol";
+// import {HelloWorldServiceManager as CipherFlowAVS} from "../src/hello-world-avs/contracts/src/HelloWorldServiceManager.sol";
 import {CipherFlowAVS} from "./CipherFlowAVS.sol";
 import {SimpleEncryptedMathDemo} from "./libraries/SimpleEncryptedMathDemo.sol";
 import {FhenixDemo} from "./libraries/FhenixDemo.sol";
