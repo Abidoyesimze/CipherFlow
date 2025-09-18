@@ -1,4 +1,4 @@
-# 🔐 CipherFlow Hook
+#  CipherFlow Hook
 
 > **MEV-Resistant & Confidential Liquidity Management for Uniswap v4**
 
@@ -12,7 +12,7 @@ CipherFlow Hook is a **production-ready Uniswap v4 hook** that transforms standa
 
 ###  Key Features
 
-- 🛡️ **Advanced MEV Protection** - Real-time attack detection and prevention
+-  **Advanced MEV Protection** - Real-time attack detection and prevention
 -  **Confidential Liquidity** - Encrypted position management using FHE
 -  **Dynamic Fee Adjustment** - Intelligent pricing based on market conditions
 -  **EigenLayer Integration** - MEV-resistant execution through AVS
