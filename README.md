@@ -380,7 +380,7 @@ forge test --match-contract TestFhenixDemo -vv
 
 ---
 
-## 📊 Test Results
+##  Test Results
 
 ###  Core Functionality Tests
 
