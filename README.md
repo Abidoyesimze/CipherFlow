@@ -132,6 +132,45 @@ function _calculateAdvancedDynamicFee(
 
 CipherFlow integrates with **EigenLayer** using the **hello-world AVS** as the foundation for MEV-resistant execution. Our implementation builds upon the proven EigenLayer hello-world service manager pattern:
 
+### Hello-World AVS Implementation
+
+Our EigenLayer integration is based on the complete hello-world AVS implementation located in `hello-world-avs/`. This provides:
+
+- **Complete AVS Infrastructure** - Full EigenLayer service manager implementation
+- **Operator Management** - Rust and TypeScript operator implementations
+- **Task Processing** - Encrypted order batch processing
+- **Slashing Mechanisms** - Operator accountability and security
+
+**Key Files:**
+- `hello-world-avs/contracts/src/IHelloWorldServiceManager.sol` - Main AVS interface
+- `hello-world-avs/contracts/src/HelloWorldServiceManager.sol` - Service manager implementation
+- `hello-world-avs/operator/` - Operator implementations (Rust & TypeScript)
+- `hello-world-avs/README.md` - Complete setup and deployment instructions
+
+**Quick Start Commands:**
+```bash
+# Navigate to hello-world-avs directory
+cd hello-world-avs
+
+# Install dependencies
+npm install
+
+# Start local anvil chain
+npm run start:anvil
+
+# Deploy EigenLayer contracts
+npm run deploy:core
+
+# Deploy Hello World AVS contracts  
+npm run deploy:hello-world
+
+# Start operator application
+npm run start:operator
+
+# Create tasks for testing
+npm run start:traffic
+```
+
 ```solidity
 // Based on EigenLayer HelloWorldServiceManager architecture
 contract CipherFlowAVS is Ownable, ReentrancyGuard, Pausable {
@@ -254,6 +293,12 @@ CipherFlow integrates with **two key partners** for UHI6: **EigenLayer** and **F
 - **File**: `src/CipherFlowAVS.sol` - Main AVS contract for MEV-resistant execution
 - **File**: `src/interfaces/IEigenLayer.sol` - Interface definitions for EigenLayer contracts
 - **File**: `hello-world-avs/` - Complete EigenLayer hello-world AVS implementation used as foundation
+
+**Hello-World AVS Details:**
+- **Interface**: `hello-world-avs/contracts/src/IHelloWorldServiceManager.sol` - Main AVS interface with encrypted order structures
+- **Implementation**: `hello-world-avs/contracts/src/HelloWorldServiceManager.sol` - Service manager with task processing
+- **Operators**: `hello-world-avs/operator/` - Rust and TypeScript operator implementations
+- **Documentation**: `hello-world-avs/README.md` - Complete setup, deployment, and testing instructions
 
 **Key Integration Points:**
 ```solidity
