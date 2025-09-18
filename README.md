@@ -101,7 +101,7 @@ struct EncryptedLPPosition {
 - **Sealed Operations** - Secure data processing
 - **Confidential Strategy Execution** - Hide trading strategies
 
-### 3. ⚡ Dynamic Fee System
+### 3. Dynamic Fee System
 
 **Intelligent Pricing:**
 ```solidity
