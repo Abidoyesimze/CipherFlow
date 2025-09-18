@@ -1,0 +1,17 @@
+{
+  "lib/cofhe-contracts": {
+    "rev": "f5055bfcc36243b9aaff3a55149fae10c86a7de2"
+  },
+  "lib/eigenlayer-contracts": {
+    "rev": "22c354c3a1ef23470f6c81754a58df22a5629c4f"
+  },
+  "lib/solmate": {
+    "rev": "89365b880c4f3c786bdd453d4b8e8fe410344a69"
+  },
+  "lib/v4-core": {
+    "rev": "e50237c43811bd9b526eff40f26772152a42daba"
+  },
+  "lib/v4-periphery": {
+    "rev": "60cd93803ac2b7fa65fd6cd351fd5fd4cc8c9db5"
+  }
+}
