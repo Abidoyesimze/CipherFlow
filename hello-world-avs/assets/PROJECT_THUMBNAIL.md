@@ -1,4 +1,4 @@
-# 🔒 CipherFlow: MEV-Resistant Uniswap v4 Hook
+#  CipherFlow: MEV-Resistant Uniswap v4 Hook
 
 ## Project Thumbnail
 
